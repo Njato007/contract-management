@@ -1,0 +1,83 @@
+<div class="col-lg-6 offset-lg-3" style="margin-top: 100px;">
+    <div class="card">
+        <h5 class="card-header">Edit user</h5>
+        <div class="card-body">
+            <form action="/edit-user/<%= user.id %>" method="post" id="basicform" data-parsley-validate="" novalidate="">
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input id="email" type="email" name="email" data-parsley-trigger="change" value="<%= user.username %>" required="" placeholder="Enter email" autocomplete="off" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="input-select">Type</label>
+                    <select class="form-control" id="input-select" name="type">
+                        <option value="admin" <%= user.type == 'admin' ? 'selected' : '' %>>Admin</option>
+                        <option value="other" <%= user.type == 'other' ? 'selected' : '' %>>Other</option>
+                    </select>
+                </div>
+                <label class="be-checkbox custom-control custom-checkbox">
+                    <input type="checkbox" id="change-password" class="custom-control-input"><span class="custom-control-label">Change password</span>
+                </label>
+                <div id="field"></div>
+                <div class="row">
+                    <div class="col-sm-6 pb-2 pb-sm-4 pb-lg-0 pr-0">
+                        <p class="text-danger" id="message"></p>
+                    </div>
+                    <div class="col-sm-6 pl-0">
+                        <p class="text-right">
+                            <button type="submit" class="btn btn-space btn-primary">Submit</button>
+                            <a href="/user-list" class="btn btn-space btn-secondary">Cancel</a>
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.js"></script>
+<script src="/assets/vendor/slimscroll/jquery.slimscroll.js"></script>
+<script src="/assets/vendor/parsley/parsley.js"></script>
+<script src="/assets/libs/js/main-js.js"></script>
+<script>
+    $('#form').parsley();
+</script>
+<script>
+// Example starter JavaScript for disabling form submissions if there are invalid fields
+(function R() {
+    'use strict';
+    window.addEventListener('load', function() {
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        var forms = document.getElementsByClassName('needs-validation');
+        // Loop over them and prevent submission
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+document.getElementById('change-password').addEventListener('change', (e) => {
+    let checked = e.target.checked;
+    if (checked) {
+        let password_field = document.createElement('div')
+        password_field.id = 'password-field';
+        password_field.innerHTML = `
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input id="password" type="password" name="password" placeholder="Password" required="" class="form-control">
+        </div>
+        <div class="form-group">
+            <label for="confirm">Repeat Password</label>
+            <input id="confirm" data-parsley-equalto="#password" type="password" required="" placeholder="Password" class="form-control">
+        </div>`;
+        document.getElementById('field').append(password_field)
+    } else {
+        document.getElementById('field').innerHTML = '';
+    }
+    
+})
+</script>

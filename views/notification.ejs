@@ -1,0 +1,25 @@
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <div class="card">
+            <h5 class="card-header">All notification</h5>
+            <div class="card-body">
+                <div class="list-group">
+                    <% closests.forEach(closest => { %> 
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 text-dark"><i class="fas fa-bell"></i></h5>
+                            <small>will be ended after <%= closest.day_remaining %> <%= closest.day_remaining == 1 ? 'day' : 'days' %></small>
+                        </div>
+                        <p class="mb-1">
+                            A contract is getting close. It will be end at <b><%= new Date(closest.end_date).toLocaleDateString() %></b>.<br>
+                            An email notification has been sent to: <b href="mailto:<%= closest.email %>"><%= closest.email %></b>
+                            in order to inform the client
+                        </p>
+                        <small>Donec id elit non mi porta.</small>
+                    </a>
+                    <% }) %> 
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

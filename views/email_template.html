@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email template</title>
+</head>
+<!-- Complete Email template -->
+<body style="background-color:#fff">
+	<table align="center" border="0" cellpadding="0" cellspacing="0"
+		width="550" bgcolor="white" style="border:1px solid #454655">
+		<tbody>
+			<tr>
+				<td align="center">
+					<table align="center" border="0" cellpadding="0"
+						cellspacing="0" class="col-550" width="550">
+						<tbody>
+							<tr>
+								<td align="center" style="background-color: #4b99ce;
+										height: 50px;">
+
+									<a href="#" style="text-decoration: none;">
+										<p style="color:white;
+												font-weight:bold;">
+											Contract Management
+										</p>
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+			<tr style="height: 180px;">
+				<td align="center" style="border: none;
+						border-bottom: 2px solid #4b99ce;
+						padding-right: 20px;padding-left:20px">
+
+					<p style="font-weight: bolder;font-size: 32px;
+							letter-spacing: 0.023em;
+							color:#2e2f39;">
+						Dear client!
+						<br> Check out our infos
+					</p>
+				</td>
+			</tr>
+
+			<tr style="display: inline-block;">
+				<td style="height: 150px;
+						padding: 20px;
+						border: none;
+						border-bottom: 2px solid #454655;
+						background-color: white;">
+					
+					<p class="data" style="text-align: justify-all;
+							align-items: center;
+							font-size: 15px;
+							font-family: 'century gothic';
+							padding-bottom: 12px; color: #2e2f39;">
+						<b>From : </b> <span>Our company</span>
+						<br /><br />
+						<b>Date : </b> <span style="color: #000;"><%= new Date().toLocaleDateString() %> </span>
+						<br /><br />
+						<b>To : </b> <span style="color: #000;"><%= data.email %> </span>
+						<br /><br />
+						<b>Subject : </b>Contract Termination 
+						<br /><br />
+						This letter is to inform you that the contract, we made on <b><%= new Date(data.start_date).toLocaleDateString() %></b> (date of the starting of the contract),
+						is going to be ended up by our company on the upcoming <b><%= Date(data.end_date).toLocaleDateString() %> </b> (date of the end of the contract).
+						<br /><br /><br />
+						You will be kindly requested to clear up all the dues to our company, and we will promise to do the same within the given
+						time.
+						<br /><br /><br />
+						Thanks
+					</p>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+
+</html>

@@ -1,0 +1,92 @@
+<div class="row">
+    <!-- ============================================================== -->
+    <!-- basic table  -->
+    <!-- ============================================================== -->
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <h5 class="card-header">Data from database
+                <p class="text-success float-right" id="update-notif">
+                    <a href="/add-user" class="btn btn-success btn-sm">New user</a>
+                </p>
+            </h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered first">
+                        <thead>
+                            <tr>
+                                <% users.fields.forEach(field => { %>
+                                    <th><%= field.name %></th>
+                                <% }) %>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.values.forEach(user => { %>
+                                <tr >
+                                    <% users.fields.forEach(field => { %>
+                                        <td>
+                                            <%= user[field.name] %> 
+                                        </td>
+                                    <% }) %>
+                                    <td class="text-center" type="action">
+                                        <div>
+                                            <a href="/edit-user/<%= user['Identifiant'] %>" class="btn btn-sm btn-outline-light">
+                                                <i class="fas fa-edit text-success mx-1"></i>
+                                            </a>
+                                            <a href="#" class="btn btn-sm btn-outline-light" data-toggle="modal" data-target="#modal-<%= user['Identifiant'] %>">
+                                                <i class="fas fa-trash text-danger mx-1"></i>
+                                            </a>
+                                            <div class="modal fade" id="modal-<%= user['Identifiant'] %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                                <div class="modal-dialog" role="document">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-bell"></i> User deletion</h5>
+                                                            <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </a>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="list-group">
+                                                                <a href="#" class="list-group-item list-group-item-action">
+                                                                    <div class="notification-info">
+                                                                        <div class="notification-list-user-img"><i class="fas fa-user"></i></div>
+                                                                        <div class="notification-list-user-block"><span class="notification-list-user-name"><%= user['Email address'] %></span> of type <%= user['Type of user'] %> 
+                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <form action="/user-list" method="post">
+                                                                <input type="hidden" name="id" value="<%= user['Identifiant'] %>">
+                                                                <button type="submit" class="btn btn-danger btn-sm">Confirm deletion</button>
+                                                            </form>
+                                                            <a href="#" class="btn btn-primary btn-sm" data-dismiss="modal">Close</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                            <% }) %>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <% users.fields.forEach(field => { %>
+                                    <th><%= field.name %></th>
+                                <% }) %>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end basic table  -->
+    <!-- ============================================================== -->
+</div>

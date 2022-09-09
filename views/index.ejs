@@ -1,0 +1,216 @@
+<div class="row">
+    <!-- ============================================================== -->
+    <!-- basic table  -->
+    <!-- ============================================================== -->
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="card">
+            <h5 class="card-header">Data from database
+                <p class="text-success float-right" id="update-notif"></p>
+            </h5>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered first">
+                        <thead>
+                            <tr>
+                                <% contracts.fields.forEach(field => { %>
+                                    <th class="<%= field.orgName === "pdf_contract" ? 'text-center' : '' %>"><%= field.name %></th>
+                                <% }) %>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% contracts.values.forEach(contract => { %>
+                                <tr id="row-<%= contract[contracts.fields[0].name] %>">
+                                    <% contracts.fields.forEach(field => { %>
+                                        <td  tag="row-<%= contract[contracts.fields[0].name] %>" type="<%= field.type %>">
+                                            <!-- date -->
+                                            <% let date = "", y, d, m %>
+                                            <% function format(date) { 
+                                                [d, m, y] = date.split('/')
+                                                return [y, m, d].join('-');
+                                            } %>
+                                            
+                                            <% if (field.orgName === "pdf_contract") { %>
+                                                <span class="span-row-<%= contract[contracts.fields[0].name] %>">
+                                                    <a href="/<%= contract[field.name] %>" target="_blank" class="btn-block text-center"><i class="fas fa-link"></i></a>
+                                                </span>
+                                                <button class="btn btn-sm btn-block btn-outline-primary" type="button" hidden onclick="clickFile(this, 'file-<%= contract[contracts.fields[0].name] %>')"><i class="fas fa-upload"></i></button>
+                                                <input type="file" accept="application/pdf" class="input-row-<%= contract[contracts.fields[0].name] %>" name="<%= field.orgName %>" id="file-<%= contract[contracts.fields[0].name] %>" hidden>
+                                            <% } else { %> 
+                                                <span class="span-row-<%= contract[contracts.fields[0].name] %>">
+                                                    <%= field.type !== 10 ? contract[field.name] : new Date(contract[field.name]).toLocaleDateString() %>
+                                                </span>
+                                                <input type="<%= field.type !== 10 ? 'text' : 'date' %>" name="<%= field.orgName %>" class="form-control input-row-<%= contract[contracts.fields[0].name] %> " value="<%= field.type !== 10 ? contract[field.name] : format(new Date(contract[field.name]).toLocaleDateString()) %>" hidden target="<%= contract[contracts.fields[0].name] %>">
+                                            <% } %> 
+                                        </td>
+                                    <% }) %>
+                                    <td class="text-center" type="action">
+                                        <div id="save-cancel-row-<%= contract[contracts.fields[0].name] %>" hidden>
+                                            <a href="#" class="btn btn-sm btn-outline-light" onclick="setSave(this, '<%= contract[contracts.fields[0].name] %>')"><i class="fas fa-save text-primary mx-1"></i></a>
+                                            <a href="#" class="btn btn-sm btn-outline-light" onclick="setCancel(this, 'row-<%= contract[contracts.fields[0].name] %>')"><i class="fas fa-times text-danger mx-1"></i></a>
+                                        </div>
+                                        <div id="edit-row-<%= contract[contracts.fields[0].name] %>">
+                                            <a href="#" class="btn btn-sm btn-outline-light" onclick="setEdit(this, 'row-<%= contract[contracts.fields[0].name] %>')"><i class="fas fa-edit text-success"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <% contracts.fields.forEach(field => { %>
+                                    <th class="<%= field.orgName === "pdf_contract" ? 'text-center' : '' %>"><%= field.name %></th>
+                                <% }) %> 
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end basic table  -->
+    <!-- ============================================================== -->
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-bell"></i> Notification Alert</h5>
+                    <a href="#" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="list-group">
+                        <% closests.forEach(closest => { %>
+                        <a href="/<%= closest.client_ref %> " class="list-group-item list-group-item-action">
+                            <div class="notification-info">
+                                <div class="notification-list-user-img"><i class="fas fa-bell text-primary"></i></div>
+                                <div class="notification-list-user-block">
+                                    <span class="notification-list-user-name">Client #<%= closest.client_ref %></span>: A contract is getting close. It will be ended at <b><%= new Date(closest.end_date).toLocaleDateString() %></b>
+                                    (<%= closest.day_remaining %> <%= closest.day_remaining == 1 ? 'day' : 'days' %> remaining).<br>
+                                    <% if (!closest['sent to']) { %> 
+                                    An email notification has been sent to: <b href="mailto:<%= closest.email %>"><%= closest.email %></b>
+                                    <% } else { %>
+                                    We could not send email to this client.
+                                    <% } %>
+                                </div>
+                            </div>
+                        </a>
+                        <% }) %> 
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+ <% if (closests.length > 0) { %>
+    <script src="/assets/vendor/jquery/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $("#exampleModal").modal('show');
+        });
+    </script>
+<% } %> 
+<script>
+    function setEdit(src, id) {
+        let row = document.getElementById(id);
+        let tdform = document.querySelectorAll(`#${id} > td`)
+        for (let td of tdform) {
+            if (td.firstElementChild.nextElementSibling.hasAttribute('hidden')) {
+                td.firstElementChild.setAttribute('hidden', '')
+                td.firstElementChild.nextElementSibling.removeAttribute('hidden')
+                document.getElementById(`edit-${id}`).setAttribute('hidden', '')
+                document.getElementById(`save-cancel-${id}`).removeAttribute('hidden')
+            }
+        }
+    }
+
+    function clickFile(src, id) {
+        let file = document.getElementById(id);
+        file.click();
+        file.onchange = () => {
+            if (file.files.length > 0) {
+                src.classList.replace('btn-info', 'btn-success')
+                src.innerHTML = '<i class="fas fa-check"></i>'
+            }
+        }
+    }
+
+    // typing enter on input
+    for (let input of document.querySelectorAll('input'))
+        if (input.hasAttribute('target')) {
+            let id = input.getAttribute('target');
+            input.addEventListener('keyup', function(e) {
+                if (e.keyCode === 13) {
+                    setSave(e.target, id);
+                }
+            });
+        }
+
+    function setSave(src, id) {
+        let inputs = document.querySelectorAll('.input-row-' + id)
+        const xhr = new XMLHttpRequest();
+        xhr.open("POST", '/update/' + id, true);
+        // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.responseText = 'json'
+        xhr.onreadystatechange = function() {
+            if (xhr.status === 200) {
+                try {
+                    let json = JSON.parse(xhr.response)
+                    if (json.status) {
+                        let updateNotif = document.getElementById('update-notif');
+                        // update values in the table
+                        let inputs = document.querySelectorAll('.input-row-' + id)
+                        let spans = document.querySelectorAll('.span-row-' + id)
+                        inputs.forEach((input, idx) => {
+                            if (input.type === "date") {
+                                const [y, m, d] = input.value.split("-");
+                                spans[idx].textContent = [d, m, y].join('/');
+                            } else if (input.type === "file") {
+                                if (json.pdf_url)
+                                    spans[idx].firstElementChild.href = `/${json.pdf_url}`;
+                            } else {
+                                spans[idx].textContent = input.value;
+                            }
+                        })
+                        updateNotif.textContent = json.rows + (json.rows > 1 ? ' rows ' : ' row ') + 'updated!'
+                        setTimeout(() => {
+                            updateNotif.textContent = '';
+                        }, 4000);
+                        setCancel(src, 'row-' + id)
+                    } else {
+                        alert('error')
+                    }
+                } catch {}
+            }
+        }
+        var formData = new FormData();
+        let params = "";
+        for (let input of inputs) {
+            formData.append(input.name, input.type === "file" ? input.files[0] : input.value);
+            params += `${input.name}=${input.value}&`
+        }
+
+        xhr.send(formData);
+    }
+    
+    function setCancel(src, id) {
+        let row = document.getElementById(id);
+        let tdform = document.querySelectorAll(`#${id} > td`)
+        for (let td of tdform) {
+            if (td.firstElementChild.hasAttribute('hidden')) {
+                td.firstElementChild.nextElementSibling.setAttribute('hidden', '')
+                td.firstElementChild.removeAttribute('hidden')
+                document.getElementById(`save-cancel-${id}`).setAttribute('hidden', '')
+                document.getElementById(`edit-${id}`).removeAttribute('hidden')
+            }
+        }
+    }
+
+</script>
