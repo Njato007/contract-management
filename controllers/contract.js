@@ -1,10 +1,11 @@
-const { getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableEmailSent, selectTableEmailSent, insertTableEmailSent, updateTableEmailSent, createTableUser, selectTableUser, insertTableUser, selectTableUsers, updateTableUser, deleteTableUser} = require("../models/contract")
+const { getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableEmailSent, selectTableEmailSent, insertTableEmailSent, updateTableEmailSent, createTableUser, selectTableUser, insertTableUser, selectTableUsers, updateTableUser, deleteTableUser, checkEmail, updateTableUserEmail} = require("../models/contract")
 
 createTableEmailSent()
 createTableUser()
 
 const nodemailer = require('nodemailer');
 const md5 = require("md5");
+const { genCode, sendCode } = require("../scripts/script");
 //Mailing
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -16,6 +17,7 @@ const transporter = nodemailer.createTransport({
       rejectUnauthorized: false
     }
 });
+
 const checkAuth = (req, res, next) => {
     if (req.session['login']) {
         return next()
@@ -29,6 +31,16 @@ const checkAuth2 = (req, res, next) => {
         return next()
     } else {
         res.redirect('/')
+    }
+}
+
+const checkSentCode = (req, res, next) => {
+    if (!req.session['forgot-code']) {
+        backURL = req.header('Referer') || '/';
+        // do your thang
+        res.redirect(backURL);
+    } else {
+        return next();
     }
 }
 
@@ -69,7 +81,23 @@ const postLogin = async (req, res) => {
 }
 
 const showForgot = (req, res) => {
-    res.render('forgot-password', { login: true })
+    console.log(req.session['forgot-code'], req.session['id-user'])
+    req.session['forgot-code'] = null;
+    return res.render('forgot-password', { login: true, message: null })
+}
+
+const postForgot = async (req, res) => {
+    // check email if exists
+    let check = await checkEmail([req.body.email]);
+    if (check.length > 0) {
+        const code = genCode();
+        req.session['forgot-code'] = code;
+        req.session['id-user'] = check[0].id;
+        sendCode(transporter, req.body.email, code);
+        res.redirect('/enter-code');
+    } else {
+        res.render('forgot-password', { login: true, message: "Email not found! Please, try again." })
+    }
 }
 
 const showAddUser = async (req, res) => {
@@ -107,12 +135,33 @@ const deleteUser = async (req, res) => {
     const data = [req.body.id];
     await deleteTableUser(data);
     return res.redirect('/user-list');
-
 }
 
+const showCode = async (req, res) => {
+    return res.render('enter-code', { login: true, message: null });
+}
+const postCode = async (req, res) => {
+    if (req.body.code === req.session['forgot-code']) {
+        res.redirect('new-password');
+    } else {
+        return res.render('enter-code', { login: true, message: "Code invalid! Please, try again." });
+    }
+}
+
+const showNewPassword = async (req, res) => {
+    return res.render('new-password', { login: true, message: null });
+}
+const postNewPassword = async (req, res) => {
+    if (req.body.password.length >= 4) {
+        await updateTableUserEmail([md5(req.body.password), req.session['id-user']]);
+        req.session['forgot-code'] = null;
+        res.redirect('login');
+    } else {
+        return res.render('new-password', { login: true, message: "The password is too short! Please, try another" });
+    }
+}
 
 /** */
-
 const updateContract = async (req, res) => {
     let pdf_contract = null;
     let pdf_field = 'pdf_contract';
@@ -193,7 +242,6 @@ const sendEmail = async (req, res, data = []) => {
             // insertion
             await insertTableEmailSent([item.email, formatedDate]);
             await transporter.sendMail(mailOptions, function (error, info) {
-                // console.log(error ? error : info)
                 if (!error) {
                     console.log('Message has been sent to ' + item.email)
                 } else {
@@ -295,5 +343,6 @@ const emailTemplate = (data) => {
 module.exports = { 
     showIndex, updateContract, showNotifs, emailTemplate, showLogin, showForgot,
     postLogin, showAddUser, postAddUser, showUserList, postEditUser, showEditUser,
-    deleteUser, checkAuth, checkAuth2, logout
+    deleteUser, checkAuth, checkAuth2, logout, postForgot, showCode, postCode,
+    showNewPassword, postNewPassword, checkSentCode
 }

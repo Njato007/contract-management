@@ -136,6 +136,22 @@ async function updateTableUser(stringField, data) {
   return promise;
 }
 
+// update from user_cust
+async function updateTableUserEmail(data) {
+  const promise = new Promise((resolve, reject) => {
+      var sql = "UPDATE user_cust SET password=? WHERE id=?";
+      connection.query(sql, data, function (err, result) {
+        if (err) {
+          resolve(false)
+          throw err;
+        }
+        console.log("Data updated to user_cust", data);
+        resolve(true)
+      });
+  })
+  return promise;
+}
+
 // delete from user_cust
 async function deleteTableUser(data) {
   const promise = new Promise((resolve, reject) => {
@@ -216,20 +232,36 @@ async function updateTableEmailSent(data) {
 }
 
 async function checkLogin(data) {
-    let sql = "SELECT * FROM user_cust WHERE username=? and password=?;"
-    const promise = new Promise((resolve, reject) => {
-        connection.query(sql, data, async function (error, res, fields) {
-          if (error) {
-            reject(error)
-            throw error;
-          }
-          resolve(res)
-        });
-    })
-    return promise;
+  let sql = "SELECT * FROM user_cust WHERE username=? and password=?;"
+  const promise = new Promise((resolve, reject) => {
+      connection.query(sql, data, async function (error, res, fields) {
+        if (error) {
+          reject(error)
+          throw error;
+        }
+        resolve(res)
+      });
+  })
+  return promise;
 }
+
+async function checkEmail(data) {
+  let sql = "SELECT * FROM user_cust WHERE username=?;"
+  const promise = new Promise((resolve, reject) => {
+      connection.query(sql, data, async function (error, res, fields) {
+        if (error) {
+          reject(error)
+          throw error;
+        }
+        resolve(res)
+      });
+  })
+  return promise;
+}
+
 module.exports = { 
   getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableUser,
   createTableEmailSent, insertTableEmailSent, selectTableEmailSent, updateTableEmailSent,
-  selectTableUser, insertTableUser, updateTableUser, selectTableUsers, deleteTableUser
+  selectTableUser, insertTableUser, updateTableUser, selectTableUsers, deleteTableUser,
+  checkEmail, updateTableUserEmail
 }
