@@ -1,9 +1,15 @@
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : '',
-    database : 'contract_mngmt'
+    // host     : 'localhost',
+    // user     : 'root',
+    // password : '',
+    // database : 'contract_mngmt'
+    
+    host     : 'sql11.freesqldatabase.com',
+    user     : 'sql11519285',
+    password : 'k9Qt6vh2jE',
+    database : 'sql11519285',
+
     /* online sql
     host     : 'sql8.freesqldatabase.com',
     user     : 'sql8517601',
@@ -13,9 +19,11 @@ var connection = mysql.createConnection({
 
 connection.connect(err => { if (err) console.log(err) } );
 
+const ALIAS = `client_ref as 'Client Ref', email as 'Email address', country_ref as 'Country Ref', country as 'Country', monthly_rent as 'Monthly Rent', c_index as 'Index', start_date as 'Start Date', end_date as 'End Date', segment as 'Segment', pdf_contract as 'PDF'`
+
 async function getContracts(id) {
     const promise = new Promise((resolve, reject) => {
-        connection.query("SELECT client_ref as 'Client Ref', email as 'Email address', country_ref as 'Country Ref', country as 'Country', monthly_rent as 'Monthly Rent', c_index as 'Index', start_date as 'Start Date', end_date as 'End Date', segment as 'Segment', pdf_contract as 'PDF' FROM contract" + (id ? " WHERE client_ref=" + id : ''), async function (error, res, fields) {
+        connection.query("SELECT "+ ALIAS +" FROM contract" + (id ? " WHERE client_ref=" + id : ''), async function (error, res, fields) {
           if (error) { 
             console.log (error);
             reject(error)
@@ -27,15 +35,15 @@ async function getContracts(id) {
 }
 
 async function getClosestContracts() {
-    const promise = new Promise((resolve, reject) => {
-        connection.query("SELECT *, datediff(date(end_date), date(now())) as day_remaining FROM `contract` WHERE datediff(date(end_date), date(now())) <= 7 and datediff(date(end_date), date(now())) > 0;", async function (error, res, fields) {
-          if (error) throw error;
-          resolve(res)
-        });
-        // SELECT * FROM contract where date(end_date) = (select min(date(end_date)) from contract where date(end_date) > date(now()));
-        // SELECT * FROM `contract` WHERE datediff(date(end_date), date(now())) <= 5;
-    })
-    return promise;
+  const promise = new Promise((resolve, reject) => {
+      connection.query("SELECT *, datediff(date(end_date), date(now())) as day_remaining FROM `contract` WHERE datediff(date(end_date), date(now())) <= 7 and datediff(date(end_date), date(now())) > 0;", async function (error, res, fields) {
+        if (error) throw error;
+        resolve(res)
+      });
+      // SELECT * FROM contract where date(end_date) = (select min(date(end_date)) from contract where date(end_date) > date(now()));
+      // SELECT * FROM `contract` WHERE datediff(date(end_date), date(now())) <= 5;
+  })
+  return promise;
 }
 
 async function setUpdateContract(id, data) {
@@ -61,7 +69,7 @@ async function setUpdateContract(id, data) {
 }
 
 // login
-// create table login
+// create table for user
 async function createTableUser() {
     const promise = new Promise((resolve, reject) => {
         var sql = "CREATE TABLE IF NOT EXISTS user_cust (id INT(255) AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL, password VARCHAR(500) NOT NULL, type ENUM('admin', 'other') DEFAULT 'other')";
@@ -119,6 +127,21 @@ async function insertTableUser(data) {
   })
   return promise;
 }
+async function insertContract(data) {
+  const promise = new Promise((resolve, reject) => {
+      var sql = "INSERT INTO `contract` (`client_ref`, `email`, `country_ref`, `country`, `part_pack_contract`, `segment`, `type_of_lease`, `monthly_rent`, `c_index`, `start_date`, `end_date`, `dur_total`, `dur_remail`, `opt_prolong`, `period_opt_prolong`, `collateral_granted`, `change_ctrl_close`, `governing_law`, `pdf_contract`) VALUES (null, 'andriamanirisoa.n@zurcher.edu.mg', '450', 'Madagascar', 'yes', 'Parking', 'fixed rent', 400000, 'yes', '2022-06-01', '2022-09-09', 25, 25, 'no', 0, 'yes', 'yes', 'No law', 'pdf/contract_11662552175033.pdf'), (null, 'guestfromscratch@gmail.com', '003', 'Albania', 'yes', 'Shopping Center', 'fixed rent', 450000, 'yes', '1900-01-16', '2022-09-30', 0, 0, 'no', 0, 'no', 'no', 'With', 'pdf/Concept - Bootstrap 4 Admin Dashboard Template.pdf'), (null, 'agent008@gmail.com', '004', 'Afghanistan', 'yes', 'Office', 'fixed rent', 400000, 'no', '2022-09-05', '2022-09-25', 25, 25, 'yes', 4, 'yes', 'yes', 'No law', 'pdf/contract_1.pdf'), (null, 'njatotianafiononana@gmail.com', '016', 'American Samoa', 'no', 'Residential', 'fixed rent', 650000, 'yes', '2021-01-04', '2022-09-14', 0, 0, 'yes', 1, 'no', 'no', 'With', 'pdf/contract_11662541385958.pdf');"
+      connection.query(sql, function (err, result) {
+        if (err) {
+          resolve(false)
+          throw err;
+        }
+        console.log("Data inserted to user_cust", data);
+        resolve(true)
+      });
+  })
+  return promise;
+}
+
 
 // update from user_cust
 async function updateTableUser(stringField, data) {
@@ -263,5 +286,5 @@ module.exports = {
   getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableUser,
   createTableEmailSent, insertTableEmailSent, selectTableEmailSent, updateTableEmailSent,
   selectTableUser, insertTableUser, updateTableUser, selectTableUsers, deleteTableUser,
-  checkEmail, updateTableUserEmail
+  checkEmail, updateTableUserEmail, insertContract
 }

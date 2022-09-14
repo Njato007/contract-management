@@ -1,4 +1,4 @@
-const { getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableEmailSent, selectTableEmailSent, insertTableEmailSent, updateTableEmailSent, createTableUser, selectTableUser, insertTableUser, selectTableUsers, updateTableUser, deleteTableUser, checkEmail, updateTableUserEmail} = require("../models/contract")
+const { getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableEmailSent, selectTableEmailSent, insertTableEmailSent, updateTableEmailSent, createTableUser, selectTableUser, insertTableUser, selectTableUsers, updateTableUser, deleteTableUser, checkEmail, updateTableUserEmail, insertContract} = require("../models/contract")
 
 createTableEmailSent()
 createTableUser()
@@ -325,7 +325,7 @@ const emailTemplate = (data) => {
                             <br /><br />
                             This letter is to inform you that the contract, we made on <b>${new Date(data.start_date).toLocaleDateString()}</b> (date of the starting of the contract),
                             is going to be ended up by our company on the upcoming <b>${new Date(data.end_date).toLocaleDateString()} </b> (date of the end of the contract).
-                            <br /><br /><br />
+                            <br /><br />
                             You will be kindly requested to clear up all the dues to our company, and we will promise to do the same within the given
                             time.
                             <br /><br /><br />
@@ -339,6 +339,15 @@ const emailTemplate = (data) => {
     
     </html>`;
 }
+
+// for (let index = 5; index < 200; index++) {
+//     const data = {
+//         keys: "email=?",
+//         primary: "client_ref=?",
+//         values: ["client" + new String(index).padStart(5, 0) + "@gmail.com"]
+//     }
+//     setUpdateContract(index, data);
+// }
 
 module.exports = { 
     showIndex, updateContract, showNotifs, emailTemplate, showLogin, showForgot,
