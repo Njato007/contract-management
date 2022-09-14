@@ -27,7 +27,7 @@
                                             <% let date = "", y, d, m %>
                                             <% function format(date) { 
                                                 [d, m, y] = date.split('/')
-                                                return [y,, m.padStart(1, 0), d.padStart(1, 0)].join('-');
+                                                return [y, m.padStart(1, 0), d.padStart(1, 0)].join('-');
                                             } %>
                                             
                                             <% if (field.orgName === "pdf_contract") { %>
