@@ -38,7 +38,7 @@
                                                 <input type="file" accept="application/pdf" class="input-row-<%= contract[contracts.fields[0].name] %>" name="<%= field.orgName %>" id="file-<%= contract[contracts.fields[0].name] %>" hidden>
                                             <% } else { %> 
                                                 <span class="span-row-<%= contract[contracts.fields[0].name] %>">
-                                                    <%= field.type !== 10 ? contract[field.name] : format(new Date(contract[field.name], "dmy").toLocaleDateString()) %>
+                                                    <%= field.type !== 10 ? contract[field.name] : format(new Date(contract[field.name]).toLocaleDateString(), "dmy") %>
                                                 </span>
                                                 <input type="<%= field.type !== 10 ? 'text' : 'date' %>" name="<%= field.orgName %>" class="form-control input-row-<%= contract[contracts.fields[0].name] %> " value="<%= field.type !== 10 ? contract[field.name] : format(new Date(contract[field.name]).toLocaleDateString()) %>" hidden target="<%= contract[contracts.fields[0].name] %>">
                                             <% } %> 
