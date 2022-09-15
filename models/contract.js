@@ -19,8 +19,9 @@ var connection = mysql.createConnection({
 
 connection.connect(err => { if (err) console.log(err) } );
 
-const ALIAS = `client_ref as 'Client Ref', email as 'Email address', country_ref as 'Country Ref', country as 'Country', monthly_rent as 'Monthly Rent', c_index as 'Index', start_date as 'Start Date', end_date as 'End Date', segment as 'Segment', pdf_contract as 'PDF'`
+//const ALIAS = `client_ref as 'Client Ref', email as 'Email address', country_ref as 'Country Ref', country as 'Country', monthly_rent as 'Monthly Rent', c_index as 'Index', start_date as 'Start Date', end_date as 'End Date', segment as 'Segment', pdf_contract as 'PDF'`
 
+const ALIAS = `client_ref as 'Client Ref', email as 'Email address', country_ref as 'Country Ref', country as 'Country', monthly_rent as 'Monthly Rent', c_index as 'Index', start_date as 'Start Date', end_date as 'End Date', segment as 'Segment', dur_total as 'Duration total', dur_remail as "Duration remaining", opt_prolong as 'Prolong', collateral_granted as 'Granted', change_ctrl_close as 'Close', governing_law as 'Law', pdf_contract as 'PDF'`;
 async function getContracts(id) {
     const promise = new Promise((resolve, reject) => {
         connection.query("SELECT "+ ALIAS +" FROM contract" + (id ? " WHERE client_ref=" + id : ''), async function (error, res, fields) {
