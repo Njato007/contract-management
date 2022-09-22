@@ -1,34 +1,20 @@
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-    host     : 'localhost',
-    user     : 'root',
-    password : '',
-    database : 'contract_mngmt'
+    // host     : 'localhost',
+    // user     : 'root',
+    // password : '',
+    // database : 'contract_mngmt'
     
-    // host     : 'sql11.freesqldatabase.com',
-    // user     : 'sql11519285',
-    // password : 'k9Qt6vh2jE',
-    // database : 'sql11519285',
-    // user     : 'sql11520699',
-    // password : 'VJ7iY9aI5v',
-    // database : 'sql11520699',
+    host     : 'sql11.freesqldatabase.com',
+    user     : 'sql11519285',
+    password : 'k9Qt6vh2jE',
+    database : 'sql11519285',
 
     /* online sql
     host     : 'sql8.freesqldatabase.com',
     user     : 'sql8517601',
     password : 'YQ3DQw9Fde',
     database : 'sql8517601' */
-    /* online sql simafri
-    host     : 'https://da-uk2.cloudns.io/phpMyAdmin',
-    user     : 'solumada_contractmgmt',
-    password : 'S0!umada',
-    database : 'solumada_contractmgmt' */
-    
-    // online sql simafri
-    // host     : 'ftp.solumada.mg',
-    // user     : 'solumada_contractmgmt',
-    // password : 'S0!umada',
-    // database : 'solumada_contractmgmt'
 });
 
 connection.connect(err => {
