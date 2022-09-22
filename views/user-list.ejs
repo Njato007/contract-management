@@ -17,7 +17,9 @@
                                 <% users.fields.forEach(field => { %>
                                     <th><%= field.name %></th>
                                 <% }) %>
+                                <% if (active_user.type === "admin") { %> 
                                 <th class="text-center">Actions</th>
+                                <% } %>
                             </tr>
                         </thead>
                         <tbody>
@@ -28,6 +30,7 @@
                                             <%= user[field.name] %> 
                                         </td>
                                     <% }) %>
+                                    <% if (active_user.type === "admin") { %> 
                                     <td class="text-center" type="action">
                                         <div>
                                             <a href="/edit-user/<%= user['Identifiant'] %>" class="btn btn-sm btn-outline-light">
@@ -69,6 +72,7 @@
                                             </div>
                                         </div>
                                     </td>
+                                    <% } %> 
                                 </tr>
                                 
                             <% }) %>

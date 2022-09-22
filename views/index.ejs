@@ -19,26 +19,26 @@
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- date -->
+                            <% let date = "", y, d, m %>
+                            <% function format(date, str="ymd") { 
+                                [d, m, y] = date.split('/')
+                                return str === "dmy" ? [d?.padStart(2, 0), m?.padStart(2, 0), y].join('/') : [y, d?.padStart(2, 0), m?.padStart(2, 0)].join('-');
+                            } %>
                             <% contracts.values.forEach(contract => { %>
                                 <tr id="row-<%= contract[contracts.fields[0].name] %>">
                                     <% contracts.fields.forEach(field => { %>
                                         <td  tag="row-<%= contract[contracts.fields[0].name] %>" type="<%= field.type %>">
-                                            <!-- date -->
-                                            <% let date = "", y, d, m %>
-                                            <% function format(date) { 
-                                                [d, m, y] = date.split('/')
-                                                return [y, m, d].join('-');
-                                            } %>
-                                            
                                             <% if (field.orgName === "pdf_contract") { %>
                                                 <span class="span-row-<%= contract[contracts.fields[0].name] %>">
                                                     <a href="/<%= contract[field.name] %>" target="_blank" class="btn-block text-center"><i class="fas fa-link"></i></a>
+                                                    <input type="hidden" name="old_pdf" value="<%= contract[field.name] %>" class="input-row-<%= contract[contracts.fields[0].name] %>">
                                                 </span>
                                                 <button class="btn btn-sm btn-block btn-outline-primary" type="button" hidden onclick="clickFile(this, 'file-<%= contract[contracts.fields[0].name] %>')"><i class="fas fa-upload"></i></button>
                                                 <input type="file" accept="application/pdf" class="input-row-<%= contract[contracts.fields[0].name] %>" name="<%= field.orgName %>" id="file-<%= contract[contracts.fields[0].name] %>" hidden>
                                             <% } else { %> 
                                                 <span class="span-row-<%= contract[contracts.fields[0].name] %>">
-                                                    <%= field.type !== 10 ? contract[field.name] : new Date(contract[field.name]).toLocaleDateString() %>
+                                                    <%= field.type !== 10 ? contract[field.name] : format(new Date(contract[field.name]).toLocaleDateString(), "dmy") %>
                                                 </span>
                                                 <input type="<%= field.type !== 10 ? 'text' : 'date' %>" name="<%= field.orgName %>" class="form-control input-row-<%= contract[contracts.fields[0].name] %> " value="<%= field.type !== 10 ? contract[field.name] : format(new Date(contract[field.name]).toLocaleDateString()) %>" hidden target="<%= contract[contracts.fields[0].name] %>">
                                             <% } %> 
@@ -164,26 +164,33 @@
                 try {
                     let json = JSON.parse(xhr.response)
                     if (json.status) {
+                        setCancel(src, 'row-' + id)
                         let updateNotif = document.getElementById('update-notif');
                         // update values in the table
                         let inputs = document.querySelectorAll('.input-row-' + id)
                         let spans = document.querySelectorAll('.span-row-' + id)
-                        inputs.forEach((input, idx) => {
+                        for (let idx = 0; idx < array.length; idx++) {
+                            const input = inputs[idx];
                             if (input.type === "date") {
                                 const [y, m, d] = input.value.split("-");
                                 spans[idx].textContent = [d, m, y].join('/');
-                            } else if (input.type === "file") {
-                                if (json.pdf_url)
+                            } else if (input.type === "file" ) {
+                                console.log(spans[idx].firstElementChild)
+                                if (json.pdf_url) {
                                     spans[idx].firstElementChild.href = `/${json.pdf_url}`;
+                                    spans[idx].lastElementChild.value = `/${json.pdf_url}`;
+                                }
+                            } else if (input.type === "hidden") {
+                                if (json.pdf_url)
+                                    spans[idx].lastElementChild.value = `/${json.pdf_url}`;
                             } else {
                                 spans[idx].textContent = input.value;
                             }
-                        })
+                        }
                         updateNotif.textContent = json.rows + (json.rows > 1 ? ' rows ' : ' row ') + 'updated!'
                         setTimeout(() => {
                             updateNotif.textContent = '';
                         }, 4000);
-                        setCancel(src, 'row-' + id)
                     } else {
                         alert('error')
                     }
@@ -212,5 +219,4 @@
             }
         }
     }
-
 </script>

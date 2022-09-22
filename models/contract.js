@@ -1,25 +1,44 @@
 var mysql      = require('mysql');
 var connection = mysql.createConnection({
-    // host     : 'localhost',
-    // user     : 'root',
-    // password : '',
-    // database : 'contract_mngmt'
+    host     : 'localhost',
+    user     : 'root',
+    password : '',
+    database : 'contract_mngmt'
     
-    host     : 'sql11.freesqldatabase.com',
-    user     : 'sql11519285',
-    password : 'k9Qt6vh2jE',
-    database : 'sql11519285',
+    // host     : 'sql11.freesqldatabase.com',
+    // user     : 'sql11519285',
+    // password : 'k9Qt6vh2jE',
+    // database : 'sql11519285',
+    // user     : 'sql11520699',
+    // password : 'VJ7iY9aI5v',
+    // database : 'sql11520699',
 
     /* online sql
     host     : 'sql8.freesqldatabase.com',
     user     : 'sql8517601',
     password : 'YQ3DQw9Fde',
     database : 'sql8517601' */
+    /* online sql simafri
+    host     : 'https://da-uk2.cloudns.io/phpMyAdmin',
+    user     : 'solumada_contractmgmt',
+    password : 'S0!umada',
+    database : 'solumada_contractmgmt' */
+    
+    // online sql simafri
+    // host     : 'ftp.solumada.mg',
+    // user     : 'solumada_contractmgmt',
+    // password : 'S0!umada',
+    // database : 'solumada_contractmgmt'
 });
 
-connection.connect(err => { if (err) console.log(err) } );
+connection.connect(err => {
+  if (err) {
+    console.log(err)
+    connection.end()
+  }
+} );
 
-const ALIAS = `client_ref as 'Client Ref', email as 'Email address', country_ref as 'Country Ref', country as 'Country', monthly_rent as 'Monthly Rent', c_index as 'Index', start_date as 'Start Date', end_date as 'End Date', segment as 'Segment', pdf_contract as 'PDF'`
+const ALIAS = `client_ref as 'Client Ref', email as 'Email address', country_ref as 'Country Ref', country as 'Country', monthly_rent as 'Monthly Rent', c_index as 'Index', start_date as 'Start Date', end_date as 'End Date', segment as 'Segment', dur_total as 'Duration total', dur_remail as "Duration remaining", opt_prolong as 'Prolong', collateral_granted as 'Granted', change_ctrl_close as 'Close', governing_law as 'Law', pdf_contract as 'PDF'`
 
 async function getContracts(id) {
     const promise = new Promise((resolve, reject) => {
@@ -282,9 +301,50 @@ async function checkEmail(data) {
   return promise;
 }
 
+async function getActiveContract() {
+  let sql = "SELECT * FROM contract WHERE date(end_date) > date(now());"
+  const promise = new Promise((resolve, reject) => {
+      connection.query(sql, async function (error, res, fields) {
+        if (error) {
+          reject(error)
+          throw error;
+        }
+        resolve(res)
+      });
+  })
+  return promise;
+}
+async function getExpiredContract() {
+  let sql = "SELECT * FROM contract WHERE date(end_date) <= date(now());"
+  const promise = new Promise((resolve, reject) => {
+      connection.query(sql, async function (error, res, fields) {
+        if (error) {
+          reject(error)
+          throw error;
+        }
+        resolve(res)
+      });
+  })
+  return promise;
+}
+
+async function getRents() {
+  let sql = "SELECT min(monthly_rent) as min, avg(monthly_rent) as avg, max(monthly_rent) as max FROM contract"
+  const promise = new Promise((resolve, reject) => {
+      connection.query(sql, async function (error, res, fields) {
+        if (error) {
+          reject(error)
+          throw error;
+        }
+        resolve(res)
+      });
+  })
+  return promise;
+}
+
 module.exports = { 
   getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableUser,
   createTableEmailSent, insertTableEmailSent, selectTableEmailSent, updateTableEmailSent,
   selectTableUser, insertTableUser, updateTableUser, selectTableUsers, deleteTableUser,
-  checkEmail, updateTableUserEmail, insertContract
+  checkEmail, updateTableUserEmail, insertContract, getActiveContract, getExpiredContract, getRents
 }

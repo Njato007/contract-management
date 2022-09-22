@@ -1,10 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
-const { showIndex, updateContract, showNotifs, showLogin, showForgot, postLogin, showAddUser, postAddUser, showUserList, showEditUser, postEditUser, deleteUser, checkAuth, checkAuth2, logout, postForgot, showCode, postCode, showNewPassword, postNewPassword, checkSentCode } = require('../controllers/contract');
+const { showIndex, updateContract, showNotifs, showLogin, showForgot, postLogin, showAddUser, postAddUser, showUserList, showEditUser, postEditUser, deleteUser, checkAuth, checkAuth2, logout, postForgot, showCode, postCode, showNewPassword, postNewPassword, checkSentCode, showDashboard } = require('../controllers/contract');
 
 // Navigation 
-router.route('/').get(checkAuth, showIndex);
+router.route('/').get(checkAuth, showDashboard);
+router.route('/contracts').get(checkAuth, showIndex);
 router.route('/client/:id').get(checkAuth, showIndex);
 router.route('/update/:id').post(updateContract);
 router.route('/notification').get(checkAuth, showNotifs);

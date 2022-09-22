@@ -1,11 +1,11 @@
-const { getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableEmailSent, selectTableEmailSent, insertTableEmailSent, updateTableEmailSent, createTableUser, selectTableUser, insertTableUser, selectTableUsers, updateTableUser, deleteTableUser, checkEmail, updateTableUserEmail, insertContract} = require("../models/contract")
+const { getContracts, setUpdateContract, getClosestContracts, checkLogin, createTableEmailSent, selectTableEmailSent, insertTableEmailSent, updateTableEmailSent, createTableUser, selectTableUser, insertTableUser, selectTableUsers, updateTableUser, deleteTableUser, checkEmail, updateTableUserEmail, insertContract, getActiveContract, getExpiredContract, getRents} = require("../models/contract")
 
 createTableEmailSent()
 createTableUser()
 
 const nodemailer = require('nodemailer');
 const md5 = require("md5");
-const { genCode, sendCode } = require("../scripts/script");
+const { genCode, sendCode, ar } = require("../scripts/script");
 //Mailing
 const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -161,17 +161,49 @@ const postNewPassword = async (req, res) => {
     }
 }
 
+const showDashboard = async(req, res) => {
+    let contracts = await getContracts();
+    let closests = await getClosestContracts();
+    let activeContracts = await getActiveContract();
+    let expiredContracts = await getExpiredContract();
+    let date = new Date().toLocaleDateString();
+    let rents = await getRents();
+    let rentCurrency = rents.map(e => {
+        for (let key of Object.keys(e)) {
+            e[key] = new Intl.NumberFormat("en-US", { style: "currency", currency: 'USD'}).format(e[key])
+        }
+        return e;
+    })
+    return res.render('dashboard', { contracts: contracts, closests: closests,
+        active_user: req.session['login'], login: false,
+        active_contracts: activeContracts, expired_contracts: expiredContracts,
+        date: date,
+        rents: rentCurrency[0],
+        topercent: (value, max) => value * 100 / max 
+    });
+    
+}
+
 /** */
 const updateContract = async (req, res) => {
     let pdf_contract = null;
     let pdf_field = 'pdf_contract';
+    const {old_pdf} = req.body;
+    delete req.body.old_pdf;
     if (req.files) {
         let file = req.files[pdf_field]
         if (file) {
             filename = file.name.split('.pdf')[0] + Date.now() + '.pdf';
             console.log(filename)
             file.mv('uploads/pdf/' + filename);
-            
+            // delete old file name
+            try {
+                const fs = require('fs')
+                fs.unlinkSync('uploads/' + old_pdf)
+                console.log('uploads/' + old_pdf)
+            } catch (error) {
+                
+            }
             pdf_contract = 'pdf/' + filename;
         }
     }
@@ -192,7 +224,7 @@ const updateContract = async (req, res) => {
 
     try {
         let uResp = await setUpdateContract(req.params.id, data);
-        res.send({
+        return res.send({
             status: true,
             rows: uResp,
             pdf_url: pdf_contract
@@ -340,11 +372,12 @@ const emailTemplate = (data) => {
     </html>`;
 }
 
-// for (let index = 5; index < 200; index++) {
+// for (let index = 1; index < 125; index++) {
+//     let random = ar[Math.floor(Math.random() * ar.length)]
 //     const data = {
-//         keys: "email=?",
+//         keys: "country_ref=?, country=?",
 //         primary: "client_ref=?",
-//         values: ["client" + new String(index).padStart(5, 0) + "@gmail.com"]
+//         values: [random.ref, random.country]
 //     }
 //     setUpdateContract(index, data);
 // }
@@ -353,5 +386,5 @@ module.exports = {
     showIndex, updateContract, showNotifs, emailTemplate, showLogin, showForgot,
     postLogin, showAddUser, postAddUser, showUserList, postEditUser, showEditUser,
     deleteUser, checkAuth, checkAuth2, logout, postForgot, showCode, postCode,
-    showNewPassword, postNewPassword, checkSentCode
+    showNewPassword, postNewPassword, checkSentCode, showDashboard
 }

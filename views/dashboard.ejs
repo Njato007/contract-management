@@ -1,0 +1,230 @@
+<div class="container-fluid dashboard-content">
+    <!-- ============================================================== -->
+    <!-- pageheader  -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="page-header">
+                <h3 class="mb-2">Dashboard </h3>
+                <p class="pageheader-text"></p>
+                <div class="page-breadcrumb">
+                    <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#" class="breadcrumb-link">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Contracts</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end pageheader  -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <div class="offset-xl-10 col-xl-2 col-lg-2 col-md-6 col-sm-12 col-12">
+            <form>
+                <div class="form-group">
+                    <input class="form-control" type="text" name="daterange" disabled value="Today's date: <%= date %>" />
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Contracts quantity</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1"><%= contracts.values.length %></h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-primary font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-primary bg-primary-light">
+                            <i class="fa fa-fw fa-arrow-up"></i></span>
+                            <span class="ml-1"><%= topercent(contracts.values.length, contracts.values.length) %> %</span>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <!-- <a href="#" class="card-link">View Details</a> -->
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Active contracts</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1"><%= active_contracts.length %></h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-primary font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-primary bg-primary-light">
+                            <i class="fa fa-fw <%= active_contracts.length < 50 ? 'fa-arrow-down' : 'fa-arrow-up' %>"></i></span>
+                            <span class="ml-1"><%= topercent(active_contracts.length, contracts.values.length) %>%</span>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <!-- <a href="#" class="card-link">View Details</a> -->
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Expired contracts</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1"><%= expired_contracts.length %></h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-primary font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-primary bg-primary-light">
+                            <i class="fa fa-fw <%= expired_contracts.length < 50 ? 'fa-arrow-down' : 'fa-arrow-up' %>"></i>
+                        </span>
+                            <span class="ml-1"><%= topercent(expired_contracts.length, contracts.values.length) %>%</span>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <!-- <a href="#" class="card-link">View Details</a> -->
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Close Contracts</h5>
+                <div class="card-body">
+                    <div class="metric-value d-inline-block">
+                        <h1 class="mb-1"><%= closests.length  %></h1>
+                    </div>
+                    <div class="metric-label d-inline-block float-right text-primary font-weight-bold">
+                        <span class="icon-circle-small icon-box-xs text-primary bg-primary-light">
+                            <i class="fa fa-fw <%= closests.length < 50 ? 'fa-arrow-down' : 'fa-arrow-up' %>"></i>
+                        </span>
+                        <span class="ml-1"><%= topercent(closests.length, contracts.values.length) %>%</span>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-white">
+                    <!-- <a href="#" class="card-link">View Details</a> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- end revenue year  -->
+    <!-- ============================================================== -->
+    <div class="row">
+        <!-- ============================================================== -->
+        <!-- ap and ar balance  -->
+        <!-- ============================================================== -->
+        <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="card">
+                <h5 class="card-header">Email sent todays
+                </h5>
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-envelope"></i> <%= closests.length %> <%= closests.length > 1 ? 'email' : 'emails' %> email sent </h5>
+                    <% closests.forEach(closest => { %> 
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 text-dark"><i class="fas fa-bell"></i></h5>
+                            <small>will be ended after <%= closest.day_remaining %> <%= closest.day_remaining == 1 ? 'day' : 'days' %></small>
+                        </div>
+                        <p class="mb-1">
+                            A contract is getting close. It will be end at <b><%= new Date(closest.end_date).toLocaleDateString() %></b>.<br>
+                            An email notification has been sent to: <b href="mailto:<%= closest.email %>"><%= closest.email %></b>
+                            in order to inform the client
+                        </p>
+                        <small>Donec id elit non mi porta.</small>
+                    </a>
+                    <% }) %> 
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-6 col-lg-12 col-md-12 col-sm-12 col-12">
+            <div class="row">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header">Prolonged contracts</h5>
+                        <div class="card-body">
+                            <p>Active</p>
+                            <div class="metric-value d-inline-block">
+                                <h1 class="mb-1"><%= active_contracts.filter(e => e.opt_prolong === "yes").length %></h1>
+                            </div>
+                            <div class="metric-label d-inline-block float-right text-primary font-weight-bold">
+                                <span class="icon-circle-small icon-box-xs text-primary bg-primary-light">
+                                    <i class="fa fa-fw <%= active_contracts.filter(e => e.opt_prolong === "yes").length < 50 ? 'fa-arrow-down' : 'fa-arrow-up' %>"></i>
+                                </span>
+                                <span class="ml-1"><%= topercent(active_contracts.filter(e => e.opt_prolong === "yes").length, contracts.values.length) %>%</span>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center bg-white">
+                            <!-- <a href="#" class="card-link">View Details</a> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-md-6 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header">Contract durations</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                    <p>Minimum</p>
+                                    <div class="metric-value d-inline-block">
+                                        <h1 class="mb-1"><%= expired_contracts.length %></h1>
+                                    </div>
+                                </div>
+                                <div class="col-6 text-center">
+                                    <p>Maximum</p>
+                                    <div class="metric-value d-inline-block">
+                                        <h1 class="mb-1"><%= expired_contracts.length %></h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center bg-white">
+                            <!-- <a href="#" class="card-link">View Details</a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-12">
+                    <div class="card">
+                        <h5 class="card-header">Rent in currency</h5>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-4 text-center">
+                                    <p>Minimum</p>
+                                    <div class="metric-value d-inline-block">
+                                        <h1 class="mb-1"><%= rents.min  %></h1>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <p>Average</p>
+                                    <div class="metric-value d-inline-block">
+                                        <h1 class="mb-1"><%= rents.avg  %></h1>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <p>Maximum</p>
+                                    <div class="metric-value d-inline-block">
+                                        <h1 class="mb-1"><%= rents.max  %></h1>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer text-center bg-white">
+                            <!-- <a href="#" class="card-link">View Details</a> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ============================================================== -->
+        <!-- end ap and ar balance  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- gross profit  -->
+        <!-- ============================================================== -->
+
+    </div>
+    <!-- ============================================================== -->
+    <!-- end profit margin -->
+    <!-- ============================================================== -->
+</div>
